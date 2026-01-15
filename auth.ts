@@ -6,6 +6,7 @@ const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
 export const isGoogleConfigured = Boolean(clientId && clientSecret);
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
+  secret: process.env.AUTH_SECRET,
   providers: isGoogleConfigured
     ? [
         Google({

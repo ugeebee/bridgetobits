@@ -4,7 +4,6 @@
 import Section from "@/components/section";
 import Image from "next/image";
 import Link from "next/link";
-import emailjs from "@emailjs/browser";
 import { useState } from "react";
 import { FaLinkedin, FaInstagram, FaYoutube } from 'react-icons/fa';
 export default function Contact() {
@@ -42,36 +41,13 @@ export default function Contact() {
               e.preventDefault();
               try {
                 setStatus("sending");
-                const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-                const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-                const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+                const res = await fetch("/api/contact", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(form),
+                });
 
-                const canUseEmailJS = Boolean(serviceId && templateId && publicKey);
-
-                if (canUseEmailJS) {
-                  await emailjs.send(
-                    serviceId as string,
-                    templateId as string,
-                    {
-                      first_name: form.firstName,
-                      last_name: form.lastName,
-                      name: `${form.firstName} ${form.lastName}`.trim(),
-                      email: form.email,
-                      reply_to: form.email,
-                      phone: form.phone,
-                      message: form.message,
-                    },
-                    { publicKey: publicKey as string }
-                  );
-                } else {
-                  const res = await fetch("/api/contact", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(form),
-                  });
-
-                  if (!res.ok) throw new Error("Failed to send");
-                }
+                if (!res.ok) throw new Error("Failed to send");
 
                 setStatus("sent");
                 setForm({ firstName: "", lastName: "", email: "", phone: "", message: "" });
