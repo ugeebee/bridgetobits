@@ -1,41 +1,54 @@
-# Bridge to BITS — Development Notes
+# Bridge to BITS
 
-## Contact form email forwarding (EmailJS)
+Development docs for the Bridge to BITS website.
 
-The contact form (`/contact`) is wired to send emails using EmailJS and forwards submissions to `bridgetobits@gmail.com`.
+## Getting the contact form working
 
-### One‑time setup
-1. Create an EmailJS account: https://www.emailjs.com/
-2. Add a service (Gmail or your provider) → copy the Service ID.
-3. Create an email template → copy the Template ID. Include these variables in the template:
-	- `to_email`
-	- `from_name`
-	- `from_email`
-	- `phone`
-	- `message`
-4. Go to Account → API keys → copy your Public Key.
-5. Add the keys to `.env.local` (already created):
+The contact form sends emails through EmailJS to `bridgetobits@gmail.com`. Here's how to set it up:
 
-```
+### Initial setup
+
+First, head over to [EmailJS](https://www.emailjs.com/) and create an account. Once you're in:
+
+1. **Add an email service** — Connect Gmail (or whatever provider you're using). You'll get a Service ID from this.
+
+2. **Create a template** — This is what your emails will look like. Make sure to include these variables:
+   - `to_email`
+   - `from_name`
+   - `from_email`
+   - `phone`
+   - `message`
+
+3. **Grab your Public Key** — Go to Account → API Keys and copy it.
+
+4. **Update your environment** — Open `.env.local` and add these:
+
+```env
 NEXT_PUBLIC_EMAILJS_SERVICE_ID=your_service_id
 NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=your_template_id
 NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=your_public_key
 ```
 
-6. Restart the dev server.
+5. Restart the dev server and you're good to go.
 
-### Template mapping example
-Subject: `New Contact — {{from_name}} ({{from_email}})`
+### Template example
 
-Body:
+If you're wondering what the template should look like, here's a basic one:
+
+**Subject:**
+```
+New Contact — {{from_name}} ({{from_email}})
+```
+
+**Body:**
 ```
 To: {{to_email}}
 Name: {{from_name}}
 Email: {{from_email}}
 Phone: {{phone}}
+
 Message:
 {{message}}
 ```
 
-The app sends `to_email = bridgetobits@gmail.com` by default. Change it in `app/contact/page.tsx` if needed.
-
+The form automatically sends to `bridgetobits@gmail.com`. If you need to change this, check out `app/contact/page.tsx`.
