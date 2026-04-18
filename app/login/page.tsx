@@ -4,6 +4,9 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
+// Define the API base URL from environment variables
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -20,17 +23,17 @@ function LoginForm() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:8080/login", {
+      // Use the environment variable for the API endpoint
+      const res = await fetch(`${API_BASE_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-        credentials: "include", // CRITICAL: Tells browser to store the HttpOnly cookie
+        credentials: "include", // CRITICAL: Required for cross-domain HttpOnly cookies
       });
 
       if (res.ok) {
-        // Upon success, redirect them to the protected area
         router.push("/resources");
-        router.refresh(); // Forces Next.js to re-evaluate server components/middleware
+        router.refresh(); 
       } else {
         const data = await res.text();
         setError(data || "Invalid credentials");
